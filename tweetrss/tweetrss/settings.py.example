@@ -9,6 +9,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+CONSUMER_KEY = 'app consumer key'
+CONSUMER_SECRET = 'app secret'
+
+ACCESS_TOKEN = ('user access key',
+                'user access secret')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('tweetrss',
     # Examples:
     #url(r'^$', 'home.views.index', name='index'),
-    url(r'^p/', include('proxy.urls')),
+    url(r'^p/', include('tweetrss.proxy.urls')),
 )
 
 handler404 = 'tweetrss.site.error_404'

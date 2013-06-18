@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Twitter Timeline - {{ screen_name }}</title>
+    <link>{{ account_link }}</link>
+{% for status in statuses %}
+    <item>
+      <link>{{ status.link }}</link>
+      <description>{{ status.text }}</description>
+    </item>
+{% endfor %}
+  </channel>
+</rss>
