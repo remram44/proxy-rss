@@ -5,6 +5,7 @@
     <link>{{ account_link }}</link>
 {% for status in statuses %}
     <item>
+      <title>{{ status.text }}</title>
       <link>{{ status.link }}</link>
       <description>{{ status.text }}</description>
     </item>
