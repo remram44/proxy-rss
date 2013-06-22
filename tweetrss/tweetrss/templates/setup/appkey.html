@@ -1,0 +1,33 @@
+{% extends "setup/base.html" %}
+
+{% block content %}
+<h1>Step 1/N: Register the app</h1>
+<p>You must first register the application with Twitter. To do that, go to <a href="https://dev.twitter.com/apps">dev.twitter.com</a> and sign in with your Twitter account.</p>
+<p>Click on "Create new application" on the top of the page and fill in the various fields. You do not need to fill in the "website" and "callback" sections if this is a private installation.</p>
+<p>Once this is done, you will be taken to a summary page. Note that "read-only" permissions are fine, tweet-rss does not write anything on your Twitter on any occasion. Locate and copy the <em>Consumer key</em> and <em>Consumer secret</em> of the application and paste them here:</p>
+<form method="POST" action="{% url 'tweetrss.setup.views.appkey' %}">
+  {% csrf_token %}
+  <table class="formtable">
+    <tr class="{% if 'fkey' in missing %}missing{% endif %}">
+      <td class="labels"><label for="fkey">Consumer key:</label></td>
+      <td class="widgets"><input type="text" name="fkey" id="fkey" placeholder="Paste the key here" value="{{ fkey }}"/></td>
+    </tr>
+    <tr class="{% if 'fsecret' in missing %}missing{% endif %}">
+      <td class="labels"><label for="fsecret">Consumer secret:</label></td>
+      <td class="widgets"><input type="text" name="fsecret" id="fsecret" placeholder="Paste the secret here" value="{{ fsecret }}"/></td>
+    </tr>
+  </table>
+<p>At the time of writing, the summary page offers an option to generate an user access token immediately. If this is not available to you or if you wish to use a different user than the one setting up the application, you can leave this section blank, and we will perform the usual OAuth dance in the next step.</p>
+  <table class="formtable">
+    <tr class="{% if 'futoken' in missing %}missing{% endif %}">
+      <td class="labels"><label for="futoken">User access token:</label></td>
+      <td class="widgets"><input type="text" name="futoken" id="futoken" placeholder="Paste the access token here" value="{{ futoken }}"/></td>
+    </tr>
+    <tr class="{% if 'fusecret' in missing %}missing{% endif %}">
+      <td class="labels"><label for="fusecret">User access token secret:</label></td>
+      <td class="widgets"><input type="text" name="fusecret" id="fusecret" placeholder="Paste the access token secret here" value="{{ fusecret }}"/></td>
+    </tr>
+  </table>
+  <p><button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer;">Continue</button></p>
+</form>
+{% endblock %}

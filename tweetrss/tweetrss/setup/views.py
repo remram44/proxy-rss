@@ -21,6 +21,9 @@ def index(request):
 def appkey(request):
     """Enter the application key that Twitter generated.
     """
+    return render(
+            request,
+            'setup/appkey.html')
 
 
 def userkey(request):

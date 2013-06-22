@@ -1,0 +1,10 @@
+{% extends "setup/base.html" %}
+
+{% block content %}
+<h1>Welcome to tweet-rss!</h1>
+<p>This app requires some setup in order to authenticate it with Twitter. This is necessary as the Twitter API no longer permits un-authenticated requests.</p>
+<p>Once this is done, the app will be able to perform its API calls on your behalf, which means it will be able to generate RSS feeds for users whose timeline is private, provided they are following you (just like in the regular client).</p>
+<p>This wizard will take you through the steps required to get this app working.</p>
+
+<p class="continue_button"><a href="{% url 'tweetrss.setup.views.appkey' %}">Start installation</a></p>
+{% endblock %}
