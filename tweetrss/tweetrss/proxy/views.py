@@ -16,14 +16,22 @@ def timeline(request, screen_name):
 
     api = tweepy.API(auth)
 
-    statuses = api.user_timeline(screen_name=screen_name)
-    statuses = [
-            Status(
+    tw_statuses = api.user_timeline(screen_name=screen_name)
+    statuses = []
+    for status in tw_statuses:
+        if hasattr(status, 'retweeted_status'):
+            status = status.retweeted_status
+            statuses.append(Status(
+                    u'RT @%s: %s' % (status.author.screen_name, status.text),
+                    'https://twitter.com/{screen_name}/status/{id}'.format(
+                            screen_name=status.author.screen_name,
+                            id=status.id)))
+        else:
+            statuses.append(Status(
                     status.text,
                     'https://twitter.com/{screen_name}/status/{id}'.format(
                             screen_name=screen_name,
-                            id=status.id))
-            for status in statuses]
+                            id=status.id)))
 
     return render(
             request,
