@@ -11,6 +11,8 @@ class Status(object):
 
 
 def timeline(request, screen_name):
+    include_retweets = request.GET.get('retweets', '1') != '0'
+
     auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
     auth.set_access_token(*settings.ACCESS_TOKEN)
 
@@ -20,6 +22,8 @@ def timeline(request, screen_name):
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
+            if not include_retweets:
+                continue
             status = status.retweeted_status
             statuses.append(Status(
                     u'RT @%s: %s' % (status.author.screen_name, status.text),
