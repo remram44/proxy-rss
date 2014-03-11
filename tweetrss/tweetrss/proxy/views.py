@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 import tweepy
 
@@ -18,7 +19,10 @@ def timeline(request, screen_name):
 
     api = tweepy.API(auth)
 
-    tw_statuses = api.user_timeline(screen_name=screen_name)
+    try:
+        tw_statuses = api.user_timeline(screen_name=screen_name)
+    except tweepy.TweepError:
+        return HttpResponse("tweepy error", status=503, content_type="text/plain")
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
