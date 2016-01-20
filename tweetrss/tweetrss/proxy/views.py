@@ -1,14 +1,21 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+import email.utils
+import time
 import tweepy
 
 from tweetrss import settings
 
 
+def format_date(d):
+    return email.utils.formatdate(time.mktime(d.timetuple()))
+
+
 class Status(object):
-    def __init__(self, text, link):
+    def __init__(self, text, link, date):
         self.text = text
         self.link = link
+        self.date = date
 
 
 def timeline(request, screen_name):
@@ -33,13 +40,15 @@ def timeline(request, screen_name):
                     u'RT @%s: %s' % (status.author.screen_name, status.text),
                     'https://twitter.com/{screen_name}/status/{id}'.format(
                             screen_name=status.author.screen_name,
-                            id=status.id)))
+                            id=status.id),
+                    format_date(status.created_at)))
         else:
             statuses.append(Status(
                     status.text,
                     'https://twitter.com/{screen_name}/status/{id}'.format(
                             screen_name=screen_name,
-                            id=status.id)))
+                            id=status.id),
+                    format_date(status.created_at)))
 
     return render(
             request,

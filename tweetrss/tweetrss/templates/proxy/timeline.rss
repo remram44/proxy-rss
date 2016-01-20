@@ -8,6 +8,7 @@
       <title>{{ status.text }}</title>
       <link>{{ status.link }}</link>
       <description>{{ status.text }}</description>
+      <pubDate>{{ status.date }}</pubDate>
     </item>
 {% endfor %}
   </channel>
