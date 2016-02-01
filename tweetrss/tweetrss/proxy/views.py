@@ -1,14 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+import calendar
 import email.utils
-import time
 import tweepy
 
 from tweetrss import settings
 
 
 def format_date(d):
-    return email.utils.formatdate(time.mktime(d.timetuple()))
+    return email.utils.formatdate(calendar.timegm(d.timetuple())).replace("-0000", "+0000")
 
 
 class Status(object):
