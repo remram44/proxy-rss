@@ -32,6 +32,7 @@ def timeline(request, screen_name):
         return HttpResponse("tweepy error", status=503, content_type="text/plain")
     statuses = []
     for status in tw_statuses:
+        date = format_date(status.created_at)
         if hasattr(status, 'retweeted_status'):
             if not include_retweets:
                 continue
@@ -41,14 +42,14 @@ def timeline(request, screen_name):
                     'https://twitter.com/{screen_name}/status/{id}'.format(
                             screen_name=status.author.screen_name,
                             id=status.id),
-                    format_date(status.created_at)))
+                    date))
         else:
             statuses.append(Status(
                     status.text,
                     'https://twitter.com/{screen_name}/status/{id}'.format(
                             screen_name=screen_name,
                             id=status.id),
-                    format_date(status.created_at)))
+                    date))
 
     return render(
             request,
