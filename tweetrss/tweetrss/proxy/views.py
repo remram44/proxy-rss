@@ -18,13 +18,18 @@ class Status(object):
         self.date = date
 
 
-def timeline(request, screen_name):
-    include_retweets = request.GET.get('retweets', '1') != '0'
 
+def get_twitter():
     auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
     auth.set_access_token(*settings.ACCESS_TOKEN)
 
-    api = tweepy.API(auth)
+    return tweepy.API(auth)
+
+
+def timeline(request, screen_name):
+    include_retweets = request.GET.get('retweets', '1') != '0'
+
+    api = get_twitter()
 
     try:
         tw_statuses = api.user_timeline(screen_name=screen_name)
@@ -59,5 +64,34 @@ def timeline(request, screen_name):
                     'account_link': 'https://twitter.com/{screen_name}'.format(
                             screen_name=screen_name),
                     'statuses': statuses,
-                },
+            },
+            content_type='application/rss+xml')
+
+
+def search(request, query):
+    api = get_twitter()
+
+    try:
+        tw_statuses = api.search(query)
+    except tweepy.TweepError:
+        import traceback
+        return HttpResponse("tweepy error" + traceback.format_exc(), status=503, content_type="text/plain")
+    statuses = []
+    for status in tw_statuses:
+        date = format_date(status.created_at)
+        if hasattr(status, 'retweeted_status'):
+            continue
+        statuses.append(Status(
+                "@%s: %s" % (status.author.screen_name, status.text),
+                'https://twitter.com/{screen_name}/status/{id}'.format(
+                        screen_name=status.author.screen_name,
+                        id=status.id),
+                date))
+
+    return render(
+            request,
+            'proxy/search.rss',
+            {
+                    'statuses': statuses,
+            },
             content_type='application/rss+xml')

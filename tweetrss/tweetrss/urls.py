@@ -4,8 +4,10 @@ urlpatterns = patterns('tweetrss',
     # Examples:
     #url(r'^$', 'home.views.index', name='index'),
 
-    # Proxy
+    # Timeline
     url(r'^p/(.+)$', 'proxy.views.timeline', name='timeline'),
+    # Search
+    url(r'^s/(.+)$', 'proxy.views.search', name='search'),
 )
 
 handler404 = 'tweetrss.site.error_404'
