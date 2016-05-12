@@ -1,15 +1,15 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
     <title>Twitter Search</title>
     <link>https://twitter.com/</link>
 {% for status in statuses %}
     <item>
-      <title>@{{ status.screen_name }}: {{ status.text }}</title>
+      <title>@{{ status.screen_name }}: {{ status.text|safe }}</title>
       <link>{{ status.link }}</link>
       <description><![CDATA[
         <blockquote class="twitter-tweet">
-          <p>{{ status.text }}</p>&mdash; {{ status.full_name }} (@{{ status.screen_name }}) <a href="https://twitter.com/{{ status.screen_name }}/status/{{ status.id }}">{{ status.readable_date }}</a></blockquote>
+          <p>{{ status.text|safe }}</p>&mdash; {{ status.full_name|safe }} (@{{ status.screen_name }}) <a href="https://twitter.com/{{ status.screen_name }}/status/{{ status.id }}">{{ status.readable_date }}</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
       ]]></description>
       <pubDate>{{ status.date }}</pubDate>

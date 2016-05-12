@@ -13,11 +13,13 @@ def format_date(d):
 
 class Status(object):
     def __init__(self, text, datetime, id_, author):
-        self.text = text
+        self.text = (text.encode('ascii', 'xmlcharrefreplace')
+                         .decode('ascii'))
         self.datetime = datetime
         self.id = id_
         self.screen_name = author.screen_name
-        self.full_name = author.name
+        self.full_name = (author.name.encode('ascii', 'xmlcharrefreplace')
+                                     .decode('ascii'))
 
     @property
     def readable_date(self):
@@ -78,7 +80,7 @@ def timeline(request, screen_name):
                             screen_name=screen_name),
                     'statuses': statuses,
             },
-            content_type='application/rss+xml')
+            content_type='application/rss+xml; charset=utf-8')
 
 
 def search(request, query):
@@ -105,4 +107,4 @@ def search(request, query):
             {
                     'statuses': statuses,
             },
-            content_type='application/rss+xml')
+            content_type='application/rss+xml; charset=utf-8')
