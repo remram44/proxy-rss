@@ -7,7 +7,11 @@
     <item>
       <title>{{ status.text }}</title>
       <link>{{ status.link }}</link>
-      <description>{{ status.text }}</description>
+      <description><![CDATA[
+        <blockquote class="twitter-tweet">
+          <p>{{ status.text }}</p>&mdash; {{ status.full_name }} (@{{ status.screen_name }}) <a href="https://twitter.com/{{ status.screen_name }}/status/{{ status.id }}">{{ status.readable_date }}</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+      ]]></description>
       <pubDate>{{ status.date }}</pubDate>
     </item>
 {% endfor %}
