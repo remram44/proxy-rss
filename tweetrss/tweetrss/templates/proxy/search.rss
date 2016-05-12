@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Twitter Search</title>
+    <link>https://twitter.com/</link>
+{% for status in statuses %}
+    <item>
+      <title>@{{ status.screen_name }}: {{ status.text }}</title>
+      <link>{{ status.link }}</link>
+      <description>{{ status.text }}</description>
+      <pubDate>{{ status.date }}</pubDate>
+    </item>
+{% endfor %}
+  </channel>
+</rss>
