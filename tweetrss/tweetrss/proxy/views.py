@@ -12,11 +12,26 @@ def format_date(d):
 
 
 class Status(object):
-    def __init__(self, text, link, date):
+    def __init__(self, text, datetime, id_, author):
         self.text = text
-        self.link = link
-        self.date = date
+        self.datetime = datetime
+        self.id = id_
+        self.screen_name = author.screen_name
+        self.full_name = author.name
 
+    @property
+    def readable_date(self):
+        return self.datetime.strftime("%B %d, %Y")
+
+    @property
+    def date(self):
+        return format_date(self.datetime)
+
+    @property
+    def link(self):
+        return 'https://twitter.com/{screen_name}/status/{id}'.format(
+                screen_name=self.screen_name,
+                id=self.id)
 
 
 def get_twitter():
@@ -37,24 +52,22 @@ def timeline(request, screen_name):
         return HttpResponse("tweepy error", status=503, content_type="text/plain")
     statuses = []
     for status in tw_statuses:
-        date = format_date(status.created_at)
+        date = status.created_at
         if hasattr(status, 'retweeted_status'):
             if not include_retweets:
                 continue
             status = status.retweeted_status
             statuses.append(Status(
                     u'RT @%s: %s' % (status.author.screen_name, status.text),
-                    'https://twitter.com/{screen_name}/status/{id}'.format(
-                            screen_name=status.author.screen_name,
-                            id=status.id),
-                    date))
+                    date,
+                    status.id,
+                    status.author))
         else:
             statuses.append(Status(
                     status.text,
-                    'https://twitter.com/{screen_name}/status/{id}'.format(
-                            screen_name=screen_name,
-                            id=status.id),
-                    date))
+                    date,
+                    status.id,
+                    status.author))
 
     return render(
             request,
@@ -78,15 +91,13 @@ def search(request, query):
         return HttpResponse("tweepy error" + traceback.format_exc(), status=503, content_type="text/plain")
     statuses = []
     for status in tw_statuses:
-        date = format_date(status.created_at)
         if hasattr(status, 'retweeted_status'):
             continue
         statuses.append(Status(
-                "@%s: %s" % (status.author.screen_name, status.text),
-                'https://twitter.com/{screen_name}/status/{id}'.format(
-                        screen_name=status.author.screen_name,
-                        id=status.id),
-                date))
+                status.text,
+                status.created_at,
+                status.id,
+                status.author))
 
     return render(
             request,
