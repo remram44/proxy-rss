@@ -29,6 +29,12 @@ class Status(object):
         self.screen_name = author.screen_name
         self.full_name = (author.name.encode('ascii', 'xmlcharrefreplace')
                                      .decode('ascii'))
+        if hasattr(status, 'extended_entities'):
+            self.images = [me['media_url']
+                           for me in status.extended_entities['media']
+                           if me['type'] == 'photo']
+        else:
+            self.images = []
 
     @property
     def readable_date(self):

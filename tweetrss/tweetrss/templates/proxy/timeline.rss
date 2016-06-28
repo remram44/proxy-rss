@@ -9,7 +9,11 @@
       <link>{{ status.link }}</link>
       <description><![CDATA[
         <blockquote class="twitter-tweet">
-          <p>{{ status.text|safe }}</p>&mdash; {{ status.full_name|safe }} (@{{ status.screen_name }}) <a href="https://twitter.com/{{ status.screen_name }}/status/{{ status.id }}">{{ status.readable_date }}</a></blockquote>
+          <p>{{ status.text|safe }}</p>&mdash; {{ status.full_name|safe }} (@{{ status.screen_name }}) <a href="https://twitter.com/{{ status.screen_name }}/status/{{ status.id }}">{{ status.readable_date }}</a>
+{% for img in status.images %}
+  <p><img src="{{ img }}"></p>
+{% endfor %}
+        </blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
       ]]></description>
       <pubDate>{{ status.date }}</pubDate>
