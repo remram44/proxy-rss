@@ -12,7 +12,16 @@ def format_date(d):
 
 
 class Status(object):
-    def __init__(self, text, datetime, id_, author):
+    def __init__(self, status,
+                 text=None, datetime=None, id_=None, author=None):
+        if text is None:
+            text = status.text
+        if datetime is None:
+            datetime = status.created_at
+        if id_ is None:
+            id_ = status.id
+        if author is None:
+            author = status.author
         self.text = (text.encode('ascii', 'xmlcharrefreplace')
                          .decode('ascii'))
         self.datetime = datetime
@@ -60,16 +69,11 @@ def timeline(request, screen_name):
                 continue
             status = status.retweeted_status
             statuses.append(Status(
-                    u'RT @%s: %s' % (status.author.screen_name, status.text),
-                    date,
-                    status.id,
-                    status.author))
+                    status,
+                    text=u'RT @%s: %s' % (status.author.screen_name, status.text),
+                    datetime=date))
         else:
-            statuses.append(Status(
-                    status.text,
-                    date,
-                    status.id,
-                    status.author))
+            statuses.append(Status(status))
 
     return render(
             request,
@@ -95,11 +99,7 @@ def search(request, query):
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
             continue
-        statuses.append(Status(
-                status.text,
-                status.created_at,
-                status.id,
-                status.author))
+        statuses.append(Status(status))
 
     return render(
             request,
