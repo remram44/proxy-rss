@@ -13,7 +13,7 @@ def format_date(d):
 
 class Status(object):
     def __init__(self, status,
-                 text=None, datetime=None, id_=None, author=None):
+                 text=None, datetime=None, id_=None, author=None, link=None):
         if text is None:
             text = status.text
         if datetime is None:
@@ -22,6 +22,8 @@ class Status(object):
             id_ = status.id
         if author is None:
             author = status.author
+        if link is None:
+            link = status
         self.text = (text.encode('ascii', 'xmlcharrefreplace')
                          .decode('ascii'))
         self.datetime = datetime
@@ -29,6 +31,9 @@ class Status(object):
         self.screen_name = author.screen_name
         self.full_name = (author.name.encode('ascii', 'xmlcharrefreplace')
                                      .decode('ascii'))
+        self.link = 'https://twitter.com/{screen_name}/status/{id}'.format(
+            screen_name=link.author.screen_name,
+            id=link.id)
         if hasattr(status, 'extended_entities'):
             self.images = [me['media_url']
                            for me in status.extended_entities['media']
@@ -43,12 +48,6 @@ class Status(object):
     @property
     def date(self):
         return format_date(self.datetime)
-
-    @property
-    def link(self):
-        return 'https://twitter.com/{screen_name}/status/{id}'.format(
-                screen_name=self.screen_name,
-                id=self.id)
 
 
 def get_twitter():
@@ -69,15 +68,14 @@ def timeline(request, screen_name):
         return HttpResponse("tweepy error", status=503, content_type="text/plain")
     statuses = []
     for status in tw_statuses:
-        date = status.created_at
         if hasattr(status, 'retweeted_status'):
             if not include_retweets:
                 continue
-            status = status.retweeted_status
+            old, status = status, status.retweeted_status
             statuses.append(Status(
                     status,
                     text=u'RT @%s: %s' % (status.author.screen_name, status.text),
-                    datetime=date))
+                    datetime=old.created_at, link=old))
         else:
             statuses.append(Status(status))
 
