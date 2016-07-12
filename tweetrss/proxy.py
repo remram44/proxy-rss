@@ -1,10 +1,18 @@
-from django.http import HttpResponse
-from django.shortcuts import render
 import calendar
 import email.utils
+from flask import Flask, make_response, render_template, request, Response
+import logging
+import os
 import tweepy
 
 from tweetrss import settings
+
+
+logging.basicConfig(level=logging.WARNING)
+
+app = Flask('tweetrss',
+             template_folder=os.path.join(os.path.dirname(__file__),
+                                          'templates'))
 
 
 def format_date(d):
@@ -57,15 +65,20 @@ def get_twitter():
     return tweepy.API(auth)
 
 
-def timeline(request, screen_name):
-    include_retweets = request.GET.get('retweets', '1') != '0'
+@app.route('/p/<screen_name>')
+def timeline(screen_name):
+    include_retweets = request.args.get('retweets', '1') != '0'
 
     api = get_twitter()
 
     try:
         tw_statuses = api.user_timeline(screen_name=screen_name)
     except tweepy.TweepError:
-        return HttpResponse("tweepy error", status=503, content_type="text/plain")
+        import traceback
+        return (
+            "tweepy error\n" + traceback.format_exc(),
+            503,
+            {'Content-Type': 'text/plain'})
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
@@ -79,36 +92,31 @@ def timeline(request, screen_name):
         else:
             statuses.append(Status(status))
 
-    return render(
-            request,
-            'proxy/timeline.rss',
-            {
-                    'screen_name': screen_name,
-                    'account_link': 'https://twitter.com/{screen_name}'.format(
-                            screen_name=screen_name),
-                    'statuses': statuses,
-            },
-            content_type='application/rss+xml; charset=utf-8')
+    return (
+        render_template(
+            'timeline.rss', screen_name=screen_name, statuses=statuses,
+            account_link='https://twitter.com/{0}'.format(screen_name)),
+        {'Content-Type': 'application/rss+xml'})
 
 
-def search(request, query):
+@app.route('/s/<query>')
+def search(query):
     api = get_twitter()
 
     try:
         tw_statuses = api.search(query)
     except tweepy.TweepError:
         import traceback
-        return HttpResponse("tweepy error" + traceback.format_exc(), status=503, content_type="text/plain")
+        return (
+            "tweepy error\n" + traceback.format_exc(),
+            503,
+            {'Content-Type': 'text/plain'})
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
             continue
         statuses.append(Status(status))
 
-    return render(
-            request,
-            'proxy/search.rss',
-            {
-                    'statuses': statuses,
-            },
-            content_type='application/rss+xml; charset=utf-8')
+    return (
+        render_template('search.rss', statuses=statuses),
+        {'Content-Type': 'application/rss+xml'})

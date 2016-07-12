@@ -6,6 +6,6 @@ Twitter recently [retired its API version 1](https://dev.twitter.com/blog/api-v1
 
 # Description
 
-tweet-rss is a web application written in [Python](http://www.python.org/), using [Django](https://www.djangoproject.com/). It acts as a sort of proxy, reading timelines from Twitter using [its API](https://dev.twitter.com/) (in JSON format) through the very good [tweepy](https://github.com/tweepy/tweepy) and generating the requested RSS feed dynamically.
+tweet-rss is a web application written in [Python](http://www.python.org/), using [Flask](http://flask.pocoo.org/). It acts as a sort of proxy, reading timelines from Twitter using [its API](https://dev.twitter.com/) (in JSON format) through the very good [tweepy](https://github.com/tweepy/tweepy) and generating the requested RSS feed dynamically.
 
-It currently works (and I use it daily) but the setup is non-trivial; a proper installation wizard should be implemented soon.
+It currently works (and I use it daily) but the setup is non-trivial; you need to get the required API key from Twitter yourself.
