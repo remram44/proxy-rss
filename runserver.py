@@ -1,6 +1,6 @@
 import logging
 
-from tweetrss.proxy import app
+from proxy_rss.proxy import app
 
 
 if __name__ == '__main__':

@@ -1,27 +1,33 @@
 import calendar
 import email.utils
-from flask import Flask, make_response, render_template, request, Response
+from flask import Flask, render_template, request
 import logging
 import os
 import tweepy
 
-from tweetrss import settings
+from proxy_rss import settings
 
 
 logging.basicConfig(level=logging.WARNING)
 
-app = Flask('tweetrss',
-             template_folder=os.path.join(os.path.dirname(__file__),
-                                          'templates'))
+app = Flask(
+    'proxy_rss',
+    template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+)
 
 
 def format_date(d):
-    return email.utils.formatdate(calendar.timegm(d.timetuple())).replace("-0000", "+0000")
+    return (
+        email.utils.formatdate(calendar.timegm(d.timetuple()))
+        .replace("-0000", "+0000")
+    )
 
 
 class Status(object):
-    def __init__(self, status,
-                 text=None, datetime=None, id_=None, author=None, link=None):
+    def __init__(
+        self, status,
+        text=None, datetime=None, id_=None, author=None, link=None,
+    ):
         if text is None:
             text = status.text
         if datetime is None:
@@ -41,11 +47,14 @@ class Status(object):
                                      .decode('ascii'))
         self.link = 'https://twitter.com/{screen_name}/status/{id}'.format(
             screen_name=link.author.screen_name,
-            id=link.id)
+            id=link.id,
+        )
         if hasattr(status, 'extended_entities'):
-            self.images = [me['media_url']
-                           for me in status.extended_entities['media']
-                           if me['type'] == 'photo']
+            self.images = [
+                me['media_url']
+                for me in status.extended_entities['media']
+                if me['type'] == 'photo'
+            ]
         else:
             self.images = []
 
@@ -59,8 +68,11 @@ class Status(object):
 
 
 def get_twitter():
-    auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-    auth.set_access_token(*settings.ACCESS_TOKEN)
+    auth = tweepy.OAuthHandler(
+        settings.TWITTER_CONSUMER_KEY,
+        settings.TWITTER_CONSUMER_SECRET,
+    )
+    auth.set_access_token(*settings.TWITTER_ACCESS_TOKEN)
 
     return tweepy.API(auth)
 
@@ -78,7 +90,8 @@ def timeline(screen_name):
         return (
             "tweepy error\n" + traceback.format_exc(),
             503,
-            {'Content-Type': 'text/plain'})
+            {'Content-Type': 'text/plain'},
+        )
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
@@ -86,17 +99,21 @@ def timeline(screen_name):
                 continue
             old, status = status, status.retweeted_status
             statuses.append(Status(
-                    status,
-                    text=u'RT @%s: %s' % (status.author.screen_name, status.text),
-                    datetime=old.created_at, link=old))
+                status,
+                text=u'RT @%s: %s' % (status.author.screen_name, status.text),
+                datetime=old.created_at,
+                link=old,
+            ))
         else:
             statuses.append(Status(status))
 
     return (
         render_template(
             'timeline.rss', screen_name=screen_name, statuses=statuses,
-            account_link='https://twitter.com/{0}'.format(screen_name)),
-        {'Content-Type': 'application/rss+xml'})
+            account_link='https://twitter.com/{0}'.format(screen_name),
+        ),
+        {'Content-Type': 'application/rss+xml'},
+    )
 
 
 @app.route('/s/<query>')
@@ -110,7 +127,8 @@ def search(query):
         return (
             "tweepy error\n" + traceback.format_exc(),
             503,
-            {'Content-Type': 'text/plain'})
+            {'Content-Type': 'text/plain'},
+        )
     statuses = []
     for status in tw_statuses:
         if hasattr(status, 'retweeted_status'):
@@ -119,4 +137,5 @@ def search(query):
 
     return (
         render_template('search.rss', statuses=statuses),
-        {'Content-Type': 'application/rss+xml'})
+        {'Content-Type': 'application/rss+xml'},
+    )

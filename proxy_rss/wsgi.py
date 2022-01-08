@@ -1,9 +1,9 @@
 import logging
 
-import tweetrss.proxy
+import proxy_rss.proxy
 
 
 logging.basicConfig(level=logging.WARNING)
 
 # WSGI interface
-application = tweetrss.proxy.app
+application = proxy_rss.proxy.app
