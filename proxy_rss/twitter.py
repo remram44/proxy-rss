@@ -3,12 +3,19 @@ import email.utils
 
 import flask
 from flask import render_template, request
+import os
 import tweepy
 
 from proxy_rss import settings
 
 
-blueprint = flask.Blueprint('twitter', __name__)
+blueprint = flask.Blueprint(
+    'twitter', __name__,
+    template_folder=os.path.join(
+        os.path.dirname(__file__),
+        'templates/twitter',
+    ),
+)
 
 
 def format_date(d):

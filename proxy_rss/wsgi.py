@@ -8,9 +8,6 @@ from proxy_rss import twitter
 logging.basicConfig(level=logging.WARNING)
 
 
-application = Flask(
-    'proxy_rss',
-    template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
-)
+application = Flask('proxy_rss')
 
 application.register_blueprint(twitter.blueprint, url_prefix='/twitter')
