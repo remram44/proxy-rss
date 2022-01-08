@@ -80,7 +80,7 @@ def timeline(screen_name):
 
     try:
         tw_statuses = api.user_timeline(screen_name=screen_name)
-    except tweepy.TweepError:
+    except tweepy.TweepyException:
         import traceback
         return (
             "tweepy error\n" + traceback.format_exc(),
@@ -116,8 +116,8 @@ def search(query):
     api = get_twitter()
 
     try:
-        tw_statuses = api.search(query)
-    except tweepy.TweepError:
+        tw_statuses = api.search_tweets(query)
+    except tweepy.TweepyException:
         import traceback
         return (
             "tweepy error\n" + traceback.format_exc(),
