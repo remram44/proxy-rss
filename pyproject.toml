@@ -16,10 +16,14 @@ python = "^3.8"
 Flask = "*"
 tweepy = "^4.0"
 spotipy = "^2"
+uWSGI = {version = "^2", optional = true}
 
 [tool.poetry.dev-dependencies]
 ipykernel = "*"
 flake8 = "*"
+
+[tool.poetry.extras]
+wsgi = ["uwsgi"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
