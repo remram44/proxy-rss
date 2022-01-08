@@ -15,6 +15,7 @@ repository = "https://github.com/remram44/proxy-rss"
 python = "^3.8"
 Flask = "*"
 tweepy = "^4.0"
+spotipy = "^2"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "*"

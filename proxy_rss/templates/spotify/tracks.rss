@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Spotify Tracks</title>
+{% for track in tracks %}
+    <item>
+      <title>{{ track.name }}</title>
+{% if track.external_urls and track.external_urls.spotify %}}
+      <link>{{ track.external_urls.spotify }}</link>
+{% endif %}
+      <description>{{ track.album.name }} - {{ track.name }}</description>
+      <pubDate>{{ track.album.release_date }}</pubDate>
+    </item>
+{% endfor %}
+  </channel>
+</rss>
