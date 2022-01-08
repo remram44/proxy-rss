@@ -1,5 +1,12 @@
 *.py[co]
 
+# Configuration file
+settings.py
+
+# Python
+*.py[co]
+.ipynb_checkpoints
+
 # Packages
 *.egg
 *.egg-info
