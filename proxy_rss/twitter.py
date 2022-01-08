@@ -1,19 +1,14 @@
 import calendar
 import email.utils
-from flask import Flask, render_template, request
-import logging
-import os
+
+import flask
+from flask import render_template, request
 import tweepy
 
 from proxy_rss import settings
 
 
-logging.basicConfig(level=logging.WARNING)
-
-app = Flask(
-    'proxy_rss',
-    template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
-)
+blueprint = flask.Blueprint('twitter', __name__)
 
 
 def format_date(d):
@@ -77,7 +72,7 @@ def get_twitter():
     return tweepy.API(auth)
 
 
-@app.route('/p/<screen_name>')
+@blueprint.route('/p/<screen_name>')
 def timeline(screen_name):
     include_retweets = request.args.get('retweets', '1') != '0'
 
@@ -116,7 +111,7 @@ def timeline(screen_name):
     )
 
 
-@app.route('/s/<query>')
+@blueprint.route('/s/<query>')
 def search(query):
     api = get_twitter()
 
